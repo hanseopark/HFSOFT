@@ -24,6 +24,7 @@ aodConversionCutnumber="00000003_06000008d00100001100000000"; #It is
                         # aod: 00000003_06000008d00100001100000000
 numLocalFiles=2
 isRun2="kTRUE"
+isPileup="kTRUE"
 isLx="kFALSE"
 
 workDIR="$energy/$runPeriod/$runMode$dataType"
@@ -63,9 +64,4 @@ cp ${fileListName}.txt ../$energy/$runPeriod/.
 ######################
 cd ../$workDIR
 ###valgrind --tool=callgrind aliroot -x -l -b -q '../../../runLocalAnalysisROOT6.C('$intMCrunning','$collsys', "'$runPeriod'", "'$runPeriodData'", "'$dataType'", "'$runMode'", '$recoPassData', "'$tenderPassData'", '$useCorrTask', "'$aodConversionCutnumber'", '$isRun2', '$numLocalFiles')'
-if [ $collsys -eq 0 ]; then
-aliroot -x -l -b -q '../../../runbJetpp.C('$intMCrunning','$collsys', "'$runPeriod'", "'$runPeriodData'", "'$dataType'", "'$runMode'", '$recoPassData', "'$tenderPassData'", '$useCorrTask', "'$aodConversionCutnumber'", '$isRun2', '$numLocalFiles', '$isLx')'
-fi
-if [ $collsys -eq 1 ]; then
-aliroot -x -l -b -q '../../../runInJetPbPb.C('$intMCrunning','$collsys', "'$runPeriod'", "'$runPeriodData'", "'$dataType'", "'$runMode'", '$recoPassData', "'$tenderPassData'", '$useCorrTask', "'$aodConversionCutnumber'", '$isRun2', '$numLocalFiles', '$isLx')'
-fi
+aliroot -x -l -b -q '../../../runbJetpp.C('$intMCrunning','$collsys', "'$runPeriod'", "'$runPeriodData'", "'$dataType'", "'$runMode'", '$recoPassData', "'$tenderPassData'", '$useCorrTask', "'$aodConversionCutnumber'", '$isRun2', '$numLocalFiles', '$isPileup','$isLx')'

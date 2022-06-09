@@ -26,7 +26,7 @@ R__ADD_INCLUDE_PATH($ALICE_PHYSICS)
 
 //______________________________________________________________________________
 void runbJetpp(
-    Int_t           intMCrunning                = 0,
+    Int_t           intMCrunning                = 0, //0: data, 1: MC, 2: JJ MC
     Int_t           collsys                     = 0, //0 pp, 1 pPb, 2 PbPb
     TString         runPeriod                   = "LHC15n",
     TString         runPeriodData               = "LHC15n",
@@ -38,6 +38,7 @@ void runbJetpp(
     TString         aodConversionCutnumber      = "10000003_06000008400000001000000000",
     Bool_t          isRun2                      = kFALSE,
     UInt_t          numLocalFiles               = 50,
+	Bool_t			isPileup					= kFALSE,
 	Bool_t          isLxplus                    = kFALSE,
     Int_t           chunk                       = -1
 )
@@ -66,7 +67,7 @@ void runbJetpp(
 
     if(dataType.Contains("AOD")){
         AliAODInputHandler* aodH                = new AliAODInputHandler();
-        aodH->AddFriend((char*)"AliAODGammaConversion.root");
+        //aodH->AddFriend((char*)"AliAODGammaConversion.root");
         mgr->SetInputEventHandler(aodH);
     } else if(dataType.Contains("ESD")){
         AliESDInputHandler* esdH                = new AliESDInputHandler();
@@ -98,19 +99,59 @@ void runbJetpp(
         taskCDB->SetFallBackToRaw(kTRUE);
     #endif
 
-//    // -----------------------------------------
-//    //            ImproverTask_CVMF
-//    // -----------------------------------------
-//    #if !defined (__CINT__) || defined (__CLING__)
-//		AliAnalysisTaskSEImproveITSCVMFS *taskSEI=reinbterpret_cast<AliAnalysisTaskSEImproveITSCVMFS*>(
-//		gInterpreter->ExecuteMacro("$ALICE_PHYSICS/PWGHF/vertexingHF/macros/AddTaskImproveITSCVMFS.C"));
-//    #else
-//		gROOT->LoadMacro("ALICE_PHYSICS/PWGHF/vertexingHF/macros/AddTaskImproveITSCVMFS.C");
-//		AliAnalysisTaskSEImproveITSCVMFS *taskSEI = AddTaskImproveITSCVMFS();
-//	#endif
+    // -----------------------------------------
+    //            PHYSICS SELECTION
+    // -----------------------------------------
+    #if !defined (__CINT__) || defined (__CLING__)
+        AliPhysicsSelectionTask *physSelTask=reinterpret_cast<AliPhysicsSelectionTask*>(
+        //gInterpreter->ExecuteMacro(Form("$ALICE_PHYSICS/OADB/macros/AddTaskPhysicsSelection.C(%i, %i)",intMCrunning ? 1 : 0, kTRUE)));
+        gInterpreter->ExecuteMacro(Form("$ALICE_PHYSICS/OADB/macros/AddTaskPhysicsSelection.C(%i, %i)",intMCrunning ? 1 : 0, kTRUE)));
+    #else
+        gROOT->LoadMacro("$ALICE_PHYSICS/OADB/macros/AddTaskPhysicsSelection.C");
+        AliPhysicsSelectionTask* physSelTask = AddTaskPhysicsSelection(intMCrunning);
+    #endif
+
+
+    // -----------------------------------------
+    //               PID RESPONSE
+    // -----------------------------------------
+    #if !defined (__CINT__) || defined (__CLING__)
+        AliAnalysisTaskPIDResponse *pidRespTask=reinterpret_cast<AliAnalysisTaskPIDResponse*>(
+        gInterpreter->ExecuteMacro(Form("$ALICE_ROOT/ANALYSIS/macros/AddTaskPIDResponse.C(%i, %i, %i, \"%s\")",intMCrunning,kFALSE,kFALSE,tenderPassData.Data())));
+    #else
+        gROOT->LoadMacro("$ALICE_ROOT/ANALYSIS/macros/AddTaskPIDResponse.C");
+        AddTaskPIDResponse(intMCrunning,kFALSE,kTRUE,tenderPassData);
+    #endif
+
+
+    // -----------------------------------------
+    //            ImproverTask_CVMF
+    // -----------------------------------------
+    #if !defined (__CINT__) || defined (__CLING__)
+		AliAnalysisTaskSEImproveITSCVMFS *taskImp=reinterpret_cast<AliAnalysisTaskSEImproveITSCVMFS*>(
+		gInterpreter->ExecuteMacro(Form("$ALICE_PHYSICS/PWGHF/vertexingHF/macros/AddTaskImproveITSCVMFS.C(%i, \"%s\", \"%s\", %i)",kTRUE,"","",0)));
+		//gInterpreter->ExecuteMacro(Form("$ALICE_PHYSICS/PWGHF/vertexingHF/macros/AddTaskImproveITSCVMFS.C(%i, \"%s\", \"%s\", %i)",kFALSE,"","",0)));
+    #else
+		gROOT->LoadMacro("ALICE_PHYSICS/PWGHF/vertexingHF/macros/AddTaskImproveITSCVMFS.C");
+		AliAnalysisTaskSEImproveITSCVMFS *taskImp = AddTaskImproveITSCVMFS();
+	#endif
 
 
 //////////////////////////////////////////////////////////////////////////////
+
+//	////////// FOR MY TASK /////////
+//	#if !defined (__CINT__) || defined (__CLING__)
+//		gInterpreter->LoadMacro("$HFDIR/Script/LOCAL/AliAnalysisTaskMyTask.cxx++g");
+////		AliAnalysisTaskMyTask *task = reinterpret_cast<AliAnalysisTaskMyTask*>(gInterpreter->ExecuteMacro("AddMyTask.C"));
+//		AliAnalysisTaskMyTask *taskMe=reinterpret_cast<AliAnalysisTaskMyTask*>(
+//		gInterpreter->ExecuteMacro("$HFDIR/Script/Local/AddMyTask.C"));
+//	#else
+//		gROOT->LoadMacro("$HFDIR/Script/LOCAL/AliAnalysisTaskMyTask.cxx++g");
+//		gROOT->LoadMacro("$HFDIR/Script/LOCAL/AddMyTask.C");
+//		AliAnalysisTaskMyTask *taskMe = AddMyTask();
+//	#endif
+
+
 
     mgr->SetUseProgressBar(1, 1);
     if (!mgr->InitAnalysis()) return;
@@ -141,7 +182,7 @@ void runbJetpp(
 
     // start analysis
     cout << "Starting LOCAL Analysis...";
-    mgr->SetDebugLevel(5);
+    //mgr->SetDebugLevel(1);
     mgr->StartAnalysis("local", chain); //test, local
     // mgr->StartAnalysis("test", chain); //test, local
 

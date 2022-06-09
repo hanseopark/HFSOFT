@@ -36,7 +36,4 @@ class AliAnalysisTaskMyTask : public AliAnalysisTaskSE
        ClassDef(AliAnalysisTaskMyTask, 1);
 };
 
-
-
-
 #endif
