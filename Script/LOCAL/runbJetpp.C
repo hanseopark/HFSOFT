@@ -29,7 +29,6 @@ void runbJetpp(
     Int_t           intMCrunning                = 0, //0: data, 1: MC, 2: JJ MC
     Int_t           collsys                     = 0, //0 pp, 1 pPb, 2 PbPb
     TString         runPeriod                   = "LHC15n",
-    TString         runPeriodData               = "LHC15n",
     TString         dataType                    = "AOD",
     TString         runMode                     = "PQ2HC",//P:PCM, 2:PCM+Tree, Q:PhotonQA, H:hybrid PCMEMC, C: EMC
     Int_t           recoPassData                = 4,
@@ -60,8 +59,8 @@ void runbJetpp(
     cout << dataType.Data() << " analysis chosen" << endl;
     // Check type of input and create handler for it
     TString localFiles("-1");
-	if(isLxplus) localFiles                       = Form("../test%s%s_lx.txt",runPeriodData.Data(),dataType.Data());
-	else localFiles                               = Form("../test%s%s.txt",runPeriodData.Data(),dataType.Data());
+	if(isLxplus) localFiles                       = Form("../test%s%s_lx.txt",runPeriod.Data(),dataType.Data());
+	else localFiles                               = Form("../test%s%s.txt",runPeriod.Data(),dataType.Data());
     if(chunk != -1)
       localFiles                                  = Form("../testSample%s_%d.txt",dataType.Data(),chunk);
 
@@ -105,7 +104,7 @@ void runbJetpp(
     #if !defined (__CINT__) || defined (__CLING__)
         AliPhysicsSelectionTask *physSelTask=reinterpret_cast<AliPhysicsSelectionTask*>(
         //gInterpreter->ExecuteMacro(Form("$ALICE_PHYSICS/OADB/macros/AddTaskPhysicsSelection.C(%i, %i)",intMCrunning ? 1 : 0, kTRUE)));
-        gInterpreter->ExecuteMacro(Form("$ALICE_PHYSICS/OADB/macros/AddTaskPhysicsSelection.C(%i, %i)",intMCrunning ? 1 : 0, kTRUE)));
+        gInterpreter->ExecuteMacro(Form("$ALICE_PHYSICS/OADB/macros/AddTaskPhysicsSelection.C(%i, %i)",intMCrunning,kTRUE)));
     #else
         gROOT->LoadMacro("$ALICE_PHYSICS/OADB/macros/AddTaskPhysicsSelection.C");
         AliPhysicsSelectionTask* physSelTask = AddTaskPhysicsSelection(intMCrunning);
@@ -117,10 +116,11 @@ void runbJetpp(
     // -----------------------------------------
     #if !defined (__CINT__) || defined (__CLING__)
         AliAnalysisTaskPIDResponse *pidRespTask=reinterpret_cast<AliAnalysisTaskPIDResponse*>(
-        gInterpreter->ExecuteMacro(Form("$ALICE_ROOT/ANALYSIS/macros/AddTaskPIDResponse.C(%i, %i, %i, \"%s\")",intMCrunning,kFALSE,kFALSE,tenderPassData.Data())));
+        //gInterpreter->ExecuteMacro(Form("$ALICE_ROOT/ANALYSIS/macros/AddTaskPIDResponse.C(%i, %i, %i,\"%i\")",intMCrunning,kTRUE,0,recoPassData)));
+        gInterpreter->ExecuteMacro(Form("$ALICE_ROOT/ANALYSIS/macros/AddTaskPIDResponse.C(%i, %i, %i,\"%i\")",intMCrunning,kFALSE,kFALSE,recoPassData)));
     #else
         gROOT->LoadMacro("$ALICE_ROOT/ANALYSIS/macros/AddTaskPIDResponse.C");
-        AddTaskPIDResponse(intMCrunning,kFALSE,kTRUE,tenderPassData);
+        AddTaskPIDResponse(intMCrunning,kFALSE,kFALSE);
     #endif
 
 
@@ -136,7 +136,66 @@ void runbJetpp(
 		AliAnalysisTaskSEImproveITSCVMFS *taskImp = AddTaskImproveITSCVMFS();
 	#endif
 
+    // -----------------------------------------
+    //               Jet
+    // -----------------------------------------
+	
+    #if !defined (__CINT__) || defined (__CLING__)
+		//AliEmcalJetTask *taskjetReader = reinterpret_cast<AliEmcalJetTask*>(
+		//gInterpreter->ExecuteMacro(Form("$ALICE_PHYSICS/PWGJE/EMCALJetTasks/macros/AddTaskEmcalJet.C(\"%s\",\"%s\",%s,%f,AliJetContainer::kChargedJet,%f,%f,%f,AliJetContainer::pt_scheme,\"%s\",%f,kFALSE,kFALSE)","mcparticles","",AliJetContainer::antikt_algorithm,0.4,0.15,0.,0.01,"Jet",10.)));
+		AddTaskEmcalJet("mcparticles", "", AliJetContainer::antikt_algorithm, 0.4, AliJetContainer::kChargedJet, 0.15, 0., 0.01, AliJetContainer::pt_scheme, "Jet", 10., kFALSE, kFALSE);
+		AddTaskEmcalJet("tracks", "", AliJetContainer::antikt_algorithm, 0.4, AliJetContainer::kChargedJet, 0.15, 0., 0.01, AliJetContainer::pt_scheme, "Jet", 10., kFALSE, kFALSE);
 
+		//AliEmcalJetTask* EMCJetTask=reinterpret_cast<AliEmcalJetTask*>(
+		//gInterpreter->ExecuteMacro(Form("$ALICE_PHYSICS/PWGJE/EMCALJetTasks/macros/AddTaskEmcalJet.C(\"mcparticles\", \"\", AliJetContainer::antikt_algorithm, 0.4, AliJetContainer::kChargedJet, 0.15, 0., 0.01, AliJetContainer::pt_scheme, \"Jet\", 10., kFALSE, kFALSE))")));
+
+		//EMCJetTask->GetTrackContainer(0)->SetTrackFilterType(AliEmcalTrackSelection::kCustomTrackFilter);
+		//EMCJetTask->GetTrackContainer(0)->SetAODFilterBits((1<<4)|(1<<9));
+		//EMCJetTask->SelectCollisionCandidates(AliVEvent::kAny);
+		//EMCJetTask->SetUseNewCentralityEstimation(kTRUE);
+    #else
+		gROOT->LoadMacro("$ALICE_PHYSICS/PWGJE/EMCALJetTasks/macros/AddTaskEmcalJet.C");
+    #endif
+
+	Int_t arr[22]  = {0, 5, 7, 9, 12, 16, 21, 28, 36, 45, 57, 70, 85, 99, 115, 132, 150, 169, 190, 212, 235, 10000000};//
+	TArrayI bins(22, arr);
+    #if !defined (__CINT__) || defined (__CLING__)
+		AliAnalysisTaskJetExtractor *taskJet = reinterpret_cast<AliAnalysisTaskJetExtractor*>(
+		gInterpreter->ExecuteMacro(Form("$ALICE_PHYSICS/PWGJE/EMCALJetTasks/macros/AddTaskJetExtractor.C(\"%s\",\"%s\",\"%s\",\"%s\",%f,\"%s\")","tracks","","Jet_AKTChargedR040_tracks_pT0150_pt_scheme","",0.4,"bJets")));
+		//gInterpreter->ExecuteMacro(Form("$ALICE_PHYSICS/PWGJE/EMCALJetTasks/macros/AddTaskJetExtractor.C(\"%s\",\"%s\",\"%s\",\"%s\",%f,\"%s\")","mctracks","","Jet_AKTChargedR040_mcparticles_pT0150_pt_scheme","",0.4,"bJets")));
+//		AliAnalysisTaskJetExtractor *taskJet = reinterpret_cast<AliAnalysisTaskJetExtractor*>(
+//		gInterpreter->ExecuteMacro(Form("$ALICE_PHYSICS/PWGJE/EMCALJetTasks/macros/AddTaskJetExtractor.C(\"%s\",\"%s\",\"%s\",\"%s\",%f,\"%s\")","tracks","","Jet_AKTChargedR040_tracks_pT0150_pt_scheme","",0.4,"bJets")));
+		taskJet->SetIsPythia(kTRUE);
+		taskJet->SelectCollisionCandidates(AliVEvent::kINT7);
+		taskJet->SetForceBeamType(AliAnalysisTaskEmcal::kpp);
+		taskJet->SetVzRange(-10,10);
+		taskJet->SetSaveConstituents(1);
+		taskJet->SetSaveConstituentsIP(1);
+		taskJet->SetSaveConstituentPID(0);
+		taskJet->SetSaveJetShapes(1);
+		taskJet->SetSaveJetSplittings(1);
+		taskJet->SetSaveSecondaryVertices(1);
+		taskJet->SetSaveTriggerTracks(0);
+		taskJet->SetSaveMCInformation(1);
+		taskJet->GetJetTree()->AddExtractionPercentage(0,10, 0.3);
+		taskJet->GetJetTree()->AddExtractionPercentage(10,20, 0.6);
+		taskJet->GetJetTree()->AddExtractionPercentage(20,40, 0.8);
+		taskJet->GetJetTree()->AddExtractionPercentage(40,200, 1.0);
+		taskJet->GetJetTree()->AddExtractionJetTypeHM(5);
+		taskJet->GetJetContainer(0)->SetJetRadius(0.4);
+		taskJet->GetJetContainer(0)->SetPercAreaCut(0.6);
+		taskJet->GetJetContainer(0)->SetJetEtaLimits(-0.5, 0.5);
+		taskJet->GetJetContainer(0)->SetMaxTrackPt(1000);
+		taskJet->GetTrackContainer(0)->SetTrackFilterType(AliEmcalTrackSelection::kCustomTrackFilter);
+		taskJet->GetTrackContainer(0)->SetAODFilterBits((1<<4)|(1<<9));
+//		taskJet->SetNumberOfPtHardBins(bins.GetSize()-1);
+//		taskJet->SetUserPtHardBinning(bins);
+    #else
+		gROOT->LoadMacro("$ALICE_PHYSICS/PWGJE/EMCALJetTasks/macros/AddTaskJetExtractor.C");
+    #endif
+	
+
+        //gInterpreter->ExecuteMacro(Form("$ALICE_ROOT/ANALYSIS/macros/AddTaskPIDResponse.C(%i, %i, %i,\"%i\")",intMCrunning,kFALSE,kFALSE,recoPassData)));
 //////////////////////////////////////////////////////////////////////////////
 
 //	////////// FOR MY TASK /////////
