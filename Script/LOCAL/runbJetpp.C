@@ -162,32 +162,33 @@ void runbJetpp(
     #if !defined (__CINT__) || defined (__CLING__)
 		AliAnalysisTaskJetExtractor *taskJet = reinterpret_cast<AliAnalysisTaskJetExtractor*>(
 		gInterpreter->ExecuteMacro(Form("$ALICE_PHYSICS/PWGJE/EMCALJetTasks/macros/AddTaskJetExtractor.C(\"%s\",\"%s\",\"%s\",\"%s\",%f,\"%s\")","tracks","","Jet_AKTChargedR040_tracks_pT0150_pt_scheme","",0.4,"bJets")));
-		//gInterpreter->ExecuteMacro(Form("$ALICE_PHYSICS/PWGJE/EMCALJetTasks/macros/AddTaskJetExtractor.C(\"%s\",\"%s\",\"%s\",\"%s\",%f,\"%s\")","mctracks","","Jet_AKTChargedR040_mcparticles_pT0150_pt_scheme","",0.4,"bJets")));
+		//gInterpreter->ExecuteMacro(Form("$ALICE_PHYSICS/PWGJE/EMCALJetTasks/macros/AddTaskJetExtractor.C(\"%s\",\"%s\",\"%s\",\"%s\",%f,\"%s\")","tracks","","Jet_AKTChargedR040_mcparticles_pT0150_pt_scheme","",0.4,"bJets")));
 //		AliAnalysisTaskJetExtractor *taskJet = reinterpret_cast<AliAnalysisTaskJetExtractor*>(
 //		gInterpreter->ExecuteMacro(Form("$ALICE_PHYSICS/PWGJE/EMCALJetTasks/macros/AddTaskJetExtractor.C(\"%s\",\"%s\",\"%s\",\"%s\",%f,\"%s\")","tracks","","Jet_AKTChargedR040_tracks_pT0150_pt_scheme","",0.4,"bJets")));
-		taskJet->SetIsPythia(kTRUE);
-		taskJet->SelectCollisionCandidates(AliVEvent::kINT7);
-		taskJet->SetForceBeamType(AliAnalysisTaskEmcal::kpp);
-		taskJet->SetVzRange(-10,10);
-		taskJet->SetSaveConstituents(1);
-		taskJet->SetSaveConstituentsIP(1);
-		taskJet->SetSaveConstituentPID(0);
-		taskJet->SetSaveJetShapes(1);
-		taskJet->SetSaveJetSplittings(1);
-		taskJet->SetSaveSecondaryVertices(1);
-		taskJet->SetSaveTriggerTracks(0);
-		taskJet->SetSaveMCInformation(1);
-		taskJet->GetJetTree()->AddExtractionPercentage(0,10, 0.3);
-		taskJet->GetJetTree()->AddExtractionPercentage(10,20, 0.6);
-		taskJet->GetJetTree()->AddExtractionPercentage(20,40, 0.8);
-		taskJet->GetJetTree()->AddExtractionPercentage(40,200, 1.0);
-		taskJet->GetJetTree()->AddExtractionJetTypeHM(5);
-		taskJet->GetJetContainer(0)->SetJetRadius(0.4);
-		taskJet->GetJetContainer(0)->SetPercAreaCut(0.6);
-		taskJet->GetJetContainer(0)->SetJetEtaLimits(-0.5, 0.5);
-		taskJet->GetJetContainer(0)->SetMaxTrackPt(1000);
-		taskJet->GetTrackContainer(0)->SetTrackFilterType(AliEmcalTrackSelection::kCustomTrackFilter);
-		taskJet->GetTrackContainer(0)->SetAODFilterBits((1<<4)|(1<<9));
+
+//		taskJet->SetIsPythia(kTRUE);
+//		taskJet->SelectCollisionCandidates(AliVEvent::kINT7);
+//		taskJet->SetForceBeamType(AliAnalysisTaskEmcal::kpp);
+//		taskJet->SetVzRange(-10,10);
+//		taskJet->SetSaveConstituents(1);
+//		taskJet->SetSaveConstituentsIP(1);
+//		taskJet->SetSaveConstituentPID(0);
+//		taskJet->SetSaveJetShapes(1);
+//		taskJet->SetSaveJetSplittings(1);
+//		taskJet->SetSaveSecondaryVertices(1);
+//		taskJet->SetSaveTriggerTracks(0);
+//		taskJet->SetSaveMCInformation(1);
+//		taskJet->GetJetTree()->AddExtractionPercentage(0,10, 0.3);
+//		taskJet->GetJetTree()->AddExtractionPercentage(10,20, 0.6);
+//		taskJet->GetJetTree()->AddExtractionPercentage(20,40, 0.8);
+//		taskJet->GetJetTree()->AddExtractionPercentage(40,200, 1.0);
+//		taskJet->GetJetTree()->AddExtractionJetTypeHM(5);
+//		taskJet->GetJetContainer(0)->SetJetRadius(0.4);
+//		taskJet->GetJetContainer(0)->SetPercAreaCut(0.6);
+//		taskJet->GetJetContainer(0)->SetJetEtaLimits(-0.5, 0.5);
+//		taskJet->GetJetContainer(0)->SetMaxTrackPt(1000);
+//		taskJet->GetTrackContainer(0)->SetTrackFilterType(AliEmcalTrackSelection::kCustomTrackFilter);
+//		taskJet->GetTrackContainer(0)->SetAODFilterBits((1<<4)|(1<<9));
 //		taskJet->SetNumberOfPtHardBins(bins.GetSize()-1);
 //		taskJet->SetUserPtHardBinning(bins);
     #else
