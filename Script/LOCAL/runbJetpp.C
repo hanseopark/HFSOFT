@@ -143,8 +143,10 @@ void runbJetpp(
     #if !defined (__CINT__) || defined (__CLING__)
 		//AliEmcalJetTask *taskjetReader = reinterpret_cast<AliEmcalJetTask*>(
 		//gInterpreter->ExecuteMacro(Form("$ALICE_PHYSICS/PWGJE/EMCALJetTasks/macros/AddTaskEmcalJet.C(\"%s\",\"%s\",%s,%f,AliJetContainer::kChargedJet,%f,%f,%f,AliJetContainer::pt_scheme,\"%s\",%f,kFALSE,kFALSE)","mcparticles","",AliJetContainer::antikt_algorithm,0.4,0.15,0.,0.01,"Jet",10.)));
-		AddTaskEmcalJet("mcparticles", "", AliJetContainer::antikt_algorithm, 0.4, AliJetContainer::kChargedJet, 0.15, 0., 0.01, AliJetContainer::pt_scheme, "Jet", 10., kFALSE, kFALSE);
-		AddTaskEmcalJet("tracks", "", AliJetContainer::antikt_algorithm, 0.4, AliJetContainer::kChargedJet, 0.15, 0., 0.01, AliJetContainer::pt_scheme, "Jet", 10., kFALSE, kFALSE);
+		//AddTaskEmcalJet("mcparticles", "", AliJetContainer::antikt_algorithm, 0.4, AliJetContainer::kChargedJet, 0.15, 0., 0.01, AliJetContainer::pt_scheme, "Jet", 10., kFALSE, kFALSE);
+		//AddTaskEmcalJet("tracks", "", AliJetContainer::antikt_algorithm, 0.4, AliJetContainer::kChargedJet, 0.15, 0., 0.01, AliJetContainer::pt_scheme, "Jet", 10., kFALSE, kFALSE);
+		//AddTaskEmcalJet("tracks", "", AliJetContainer::antikt_algorithm, 0.4, AliJetContainer::kChargedJet, 0.15, 0., 0.01, AliJetContainer::E_scheme, "Jet", 10., kFALSE, kFALSE);
+		AddTaskEmcalJet("usedefault", "", AliJetContainer::antikt_algorithm, 0.4, AliJetContainer::kChargedJet, 0.15, 0., 0.01, AliJetContainer::pt_scheme, "Jet", 10., kFALSE, kFALSE);
 
 		//AliEmcalJetTask* EMCJetTask=reinterpret_cast<AliEmcalJetTask*>(
 		//gInterpreter->ExecuteMacro(Form("$ALICE_PHYSICS/PWGJE/EMCALJetTasks/macros/AddTaskEmcalJet.C(\"mcparticles\", \"\", AliJetContainer::antikt_algorithm, 0.4, AliJetContainer::kChargedJet, 0.15, 0., 0.01, AliJetContainer::pt_scheme, \"Jet\", 10., kFALSE, kFALSE))")));
@@ -157,16 +159,18 @@ void runbJetpp(
 		gROOT->LoadMacro("$ALICE_PHYSICS/PWGJE/EMCALJetTasks/macros/AddTaskEmcalJet.C");
     #endif
 
-	Int_t arr[22]  = {0, 5, 7, 9, 12, 16, 21, 28, 36, 45, 57, 70, 85, 99, 115, 132, 150, 169, 190, 212, 235, 10000000};//
-	TArrayI bins(22, arr);
+	//Int_t arr[22]  = {0, 5, 7, 9, 12, 16, 21, 28, 36, 45, 57, 70, 85, 99, 115, 132, 150, 169, 190, 212, 235, 10000000};//
+	Int_t arr[16]  = {0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 
+					  20, 25, 30, 35, 40, 100000};//
+	TArrayI bins(16, arr);
     #if !defined (__CINT__) || defined (__CLING__)
 		AliAnalysisTaskJetExtractor *taskJet = reinterpret_cast<AliAnalysisTaskJetExtractor*>(
 		gInterpreter->ExecuteMacro(Form("$ALICE_PHYSICS/PWGJE/EMCALJetTasks/macros/AddTaskJetExtractor.C(\"%s\",\"%s\",\"%s\",\"%s\",%f,\"%s\")","tracks","","Jet_AKTChargedR040_tracks_pT0150_pt_scheme","",0.4,"bJets")));
 		//gInterpreter->ExecuteMacro(Form("$ALICE_PHYSICS/PWGJE/EMCALJetTasks/macros/AddTaskJetExtractor.C(\"%s\",\"%s\",\"%s\",\"%s\",%f,\"%s\")","tracks","","Jet_AKTChargedR040_mcparticles_pT0150_pt_scheme","",0.4,"bJets")));
-//		AliAnalysisTaskJetExtractor *taskJet = reinterpret_cast<AliAnalysisTaskJetExtractor*>(
-//		gInterpreter->ExecuteMacro(Form("$ALICE_PHYSICS/PWGJE/EMCALJetTasks/macros/AddTaskJetExtractor.C(\"%s\",\"%s\",\"%s\",\"%s\",%f,\"%s\")","tracks","","Jet_AKTChargedR040_tracks_pT0150_pt_scheme","",0.4,"bJets")));
+		//AliAnalysisTaskJetExtractor *taskJetE = reinterpret_cast<AliAnalysisTaskJetExtractor*>(
+		//gInterpreter->ExecuteMacro(Form("$ALICE_PHYSICS/PWGJE/EMCALJetTasks/macros/AddTaskJetExtractor.C(\"%s\",\"%s\",\"%s\",\"%s\",%f,\"%s\")","tracks","","Jet_AKTChargedR040_tracks_pT0150_E_scheme","",0.4,"bJets")));
 
-//		taskJet->SetIsPythia(kTRUE);
+		taskJet->SetIsPythia(kTRUE);
 //		taskJet->SelectCollisionCandidates(AliVEvent::kINT7);
 //		taskJet->SetForceBeamType(AliAnalysisTaskEmcal::kpp);
 //		taskJet->SetVzRange(-10,10);
@@ -189,8 +193,8 @@ void runbJetpp(
 //		taskJet->GetJetContainer(0)->SetMaxTrackPt(1000);
 //		taskJet->GetTrackContainer(0)->SetTrackFilterType(AliEmcalTrackSelection::kCustomTrackFilter);
 //		taskJet->GetTrackContainer(0)->SetAODFilterBits((1<<4)|(1<<9));
-//		taskJet->SetNumberOfPtHardBins(bins.GetSize()-1);
-//		taskJet->SetUserPtHardBinning(bins);
+		taskJet->SetNumberOfPtHardBins(bins.GetSize()-1);
+		taskJet->SetUserPtHardBinning(bins);
     #else
 		gROOT->LoadMacro("$ALICE_PHYSICS/PWGJE/EMCALJetTasks/macros/AddTaskJetExtractor.C");
     #endif
