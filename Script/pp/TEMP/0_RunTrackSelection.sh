@@ -11,7 +11,7 @@ MC="/Users/hanseopark/alice/work/Data/RUN3/MC"
 echo "PID"
 #o2-analysis-spectra-tof --aod-file ${DATA}/AO2D.root -b | o2-analysis-pid-tof -b | o2-analysis-pid-tof-base -b
 #o2-analysis-pid-tof --aod-file ${DATA}/AO2D.root -b | o2-analysis-timestamp -b | o2-analysis-pid-tof-base -b
-o2-analysis-pid-tof-full --aod-file ${DATA}/AO2D.root -b | o2-analysis-timestamp -b | o2-analysis-pid-tof-base -b
+#o2-analysis-pid-tof-full --aod-file ${DATA}/AO2D.root -b | o2-analysis-timestamp -b | o2-analysis-pid-tof-base -b # real
 #o2-analysis-pid-tpc-full --aod-file ${DATA}/AO2D.root -b | o2-analysis-timestamp -b | o2-analysis-multiplicity-table -b
 #o2-analysis-spectra-tpc --aod-file ${DATA}/AO2D.root -b | o2-analysis-pid-tpc -b
 
@@ -20,4 +20,13 @@ o2-analysis-pid-tof-full --aod-file ${DATA}/AO2D.root -b | o2-analysis-timestamp
 #
 ## For HF event&track selection
 #o2-analysis-hf-track-index-skims-creator --aod-file ${DATA}/AO2D.root | o2-analysis-trackselection -b | o2-analysis-trackextension -b | o2-analysis-timestamp -b | o2-analysis-hf-candidate-creator-2prong -b | o2-analysis-hf-candidate-creator-3prong -b | o2-analysis-hf-candidate-creator-bplus -b
+
+## D Creation
+#o2-analysis-hf-d0-candidate-selector --aod-file ${DATA}/AO2D.root | o2-analysis-pid-tof-full -b | o2-analysis-timestamp -b | o2-analysis-pid-tof-base | o2-analysis-pid-tpc-full | o2-analysis-multiplicity-table -b | o2-analysis-hf-track-index-skims-creator -b | o2-analysis-trackselection -b | o2-analysis-trackextension -b | o2-analysis-hf-candidate-creator-2prong -b
+o2-analysis-hf-d0-candidate-selector --aod-file ${MC}/AO2D.root | o2-analysis-pid-tof-full -b | o2-analysis-timestamp -b | o2-analysis-pid-tof-base | o2-analysis-pid-tpc-full | o2-analysis-multiplicity-table -b | o2-analysis-hf-track-index-skims-creator -b | o2-analysis-trackselection -b | o2-analysis-trackextension -b | o2-analysis-hf-candidate-creator-2prong -b
+
+## B+ Creation
+#o2-analysis-hf-candidate-creator-bplus --aod-file ${DATA}/AO2D.root o2-analysis-hf-d0-candidate-selector -b | o2-analysis-pid-tof-full -b | o2-analysis-timestamp -b | o2-analysis-pid-tof-base | o2-analysis-pid-tpc-full | o2-analysis-multiplicity-table -b | o2-analysis-hf-track-index-skims-creator -b | o2-analysis-trackselection -b | o2-analysis-trackextension -b | o2-analysis-hf-candidate-creator-2prong -b
+#o2-analysis-hf-candidate-creator-bplus --aod-file ${MC}/AO2D.root | o2-analysis-timestamp -b | o2-analysis-pid-tof-full -b | o2-analysis-pid-tof-base | o2-analysis-pid-tpc-full | o2-analysis-multiplicity-table -b | o2-analysis-hf-track-index-skims-creator -b | o2-analysis-trackselection -b | o2-analysis-trackextension -b | o2-analysis-hf-candidate-creator-2prong -b | o2-analysis-hf-d0-candidate-selector -b
+#o2-analysis-hf-track-index-skims-creator --aod-file ${DATA}/AO2D.root | o2-analysis-trackselection -b | o2-analysis-trackextension -b | o2-analysis-timestamp -b | o2-analysis-hf-candidate-creator-2prong -b | o2-analysis-hf-d0-candidate-selector -b
 

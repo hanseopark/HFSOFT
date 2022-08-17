@@ -91,7 +91,7 @@ mkdir ${WORKDIRNAME}
 #cd ${WORKDIRNAME}
 #git checkout ${ANALYSISNAME}
 
-# Clone from scripts and andswers in latest directory to PCGSOFT
+# Clone from scripts and andswers in latest directory to HFSOFT
 
 # Take over analysis codes
 if [ "${LOCAL}" = "y" ]
@@ -169,24 +169,24 @@ else
 	echo Copy won\'t be executed.
 fi
 
-# Check if take over PCGSOFT
-echo "Do you want to set the directory in working directory as MyPCGSOFT(git)? (y/n)"
+# Check if take over HFSOFT
+echo "Do you want to set the directory in working directory as MyHFSOFT(git)? (y/n)"
 read OWNGIT
 
 if [ "${OWNGIT}" = "y" ]
 then
 	cd ${WORKDIR}
 	#git init
-	#git remote add origin https://github.com/hanseopark/PCGSOFT.git
-	#git remote add origin git@github.com:hanseopark/PCGSOFT.git
+	#git remote add origin https://github.com/hanseopark/HFSOFT.git
+	#git remote add origin git@github.com:hanseopark/HFSOFT.git
 	#git add 0_Unfold.sh
 	#git commit -m "New File1"
 	#git status
-	#git remote add origin https://github.com/hanseopark/PCGSOFT
+	#git remote add origin https://github.com/hanseopark/HFSOFT
 	#git push -u origin master
 	#git fetch origin
 
-	git clone git@github.com:hanseopark/PCGSOFT.git
+	git clone git@github.com:hanseopark/HFSOFT.git
 	echo "git test"
 fi
 
