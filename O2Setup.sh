@@ -137,7 +137,7 @@ then
 	#cp -r /Users/hanseopark/alice/hfsoft/Run3Analysisvalidation ${WORKDIR}/.
 	#rm ${WORKDIR}/Run3Analysisvalidation/codeHF/runtest.sh
 	#ln -s ${WORKDIR}/Run3Analysisvalidation/exec/runtest.sh ${WORKDIR}/Run3Analysisvalidation/codeHF/.
-	bash /Users/hanseopark/alice/hfsoft/Run3Analysisvalidation_hapark/prepareResultDirectory.sh hapark
+	bash /Users/hanseopark/alice/hfsoft/Run3Analysisvalidation/prepareResultDirectory.sh hapark
 
 	echo "Copy Run3Analysisvalidation"
 
